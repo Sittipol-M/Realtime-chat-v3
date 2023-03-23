@@ -19,8 +19,8 @@ const comparePassword = async ({ password, hashedPassword }) => {
   if (!isSame) throw new UnauthorizedError({ message: "Password Incorrect" });
 };
 
-const loginUser = async ({ username, email, password }) => {
-  const user = await getUserByUsernameOrTelOrEmail({ username, email });
+const loginUser = async ({ usernameOrEmail, password }) => {
+  const user = await getUserByUsernameOrTelOrEmail({ username: usernameOrEmail, email: usernameOrEmail });
   await comparePassword({ password, hashedPassword: user.password });
   delete user.password;
   const jwt = generateJWT({ data: user });

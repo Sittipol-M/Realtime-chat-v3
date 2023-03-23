@@ -3,9 +3,9 @@ import { validateRegister, validateExistedUser, validateLogin } from "./authVali
 
 export const login = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-    await validateLogin({ username, email, password });
-    const { jwt } = await loginUser({ username, email, password });
+    const { usernameOrEmail, password } = req.body;
+    await validateLogin({ usernameOrEmail, password });
+    const { jwt } = await loginUser({ usernameOrEmail, password });
     res.send({ success: true, jwt });
   } catch (error) {
     next(error);
@@ -14,6 +14,7 @@ export const login = async (req, res, next) => {
 
 export const register = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { username, email, tel, password, repeatPassword } = req.body;
     await validateRegister({ username, email, tel, password, repeatPassword });
     await validateExistedUser({ username, email, tel });

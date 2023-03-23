@@ -24,14 +24,13 @@ const validateRegister = async ({ username, email, tel, password, repeatPassword
   }
 };
 
-const validateLogin = async ({ username, email, password }) => {
+const validateLogin = async ({ usernameOrEmail, password }) => {
   const schema = Joi.object({
-    username: Joi.string().alphanum(),
-    email: Joi.string().email().email(),
+    usernameOrEmail: Joi.string().required(),
     password: Joi.string().alphanum().required(),
-  }).or("email", "username");
+  });
   try {
-    await schema.validateAsync({ username, email, password });
+    await schema.validateAsync({ usernameOrEmail, password });
   } catch (error) {
     throw new ValidationError({ message: error.message });
   }

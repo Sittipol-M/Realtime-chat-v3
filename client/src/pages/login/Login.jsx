@@ -1,30 +1,43 @@
+import { useState } from "react";
+import { login } from "../../api/authentication";
+import InputIcon from "../../components/inputIcon/InputIcon";
 import SocialButton from "../../components/socialButton/SocialButton";
+import { useNavigate } from "react-router-dom";
 import "./login.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [loginData, setLoginData] = useState({ usernameOrEmail: "", password: "" });
+
+  const handleTypeUsernameOrEmail = ({ input: usernameOrEmail }) => {
+    setLoginData({ ...loginData, usernameOrEmail });
+  };
+
+  const handleTypePassword = ({ input: password }) => {
+    setLoginData({ ...loginData, password });
+  };
+
+  const handleLogin = async ({ event }) => {
+    event.preventDefault();
+    const { usernameOrEmail, password } = loginData;
+    const { status, jwt } = await login({ usernameOrEmail, password });
+    if (status === 200) localStorage.setItem("auth-token", jwt);
+    if (localStorage.getItem("auth-token")) navigate("/chat");
+  };
+
   return (
     <div className="login-container  flex-center-column">
       <h1>Login Chat App</h1>
       <div className="login-box flex-center-column">
         <form className="top flex-center-column">
-          <div className="input-add-icon">
-            <div className="flex-center-column">
-              <i class="fa-solid fa-user"></i>
-            </div>
-            <input type="text" name="username-email" placeholder="Username or Email" />
-          </div>
-          <div className="input-add-icon">
-            <div className="flex-center-column">
-              <i class="fa-solid fa-key"></i>
-            </div>
-            <input type="text" name="password" placeholder="Password" />
-          </div>
+          <InputIcon icon="fa-solid fa-user" placeholder="Username or Email" type="text" handleTypeInput={handleTypeUsernameOrEmail} />
+          <InputIcon icon="fa-solid fa-key" placeholder="Password" type="password" handleTypeInput={handleTypePassword} />
           <div className="input-button-section">
             <div className="remember-me flex-center-row">
               <input type="checkbox" />
               <span>Remember me</span>
             </div>
-            <button>LOGIN</button>
+            <button onClick={(event) => handleLogin({ event })}>LOGIN</button>
           </div>
           <div className="input-button-section">
             <a href="/register">Register now</a>
